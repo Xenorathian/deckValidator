@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 public class Validator {
     private static final Pattern ETERNAL_LINK = Pattern.compile("https:\\/\\/eternalwarcry.com\\/decks\\/details\\/([\\w-]+)\\/([\\w-]+)");
-    private static final Pattern DISKORD_NAME_MARKER = Pattern.compile("#\\d{4}");
+    private static final Pattern DISCORD_NAME_MARKER = Pattern.compile("#\\d{4}");
     private static final Pattern ETERNAL_NAME = Pattern.compile("\\w+\\+\\d{4}");
     private static final String TOURNEY_IDENTIFIER = "<i class=\"fa fa-trophy\">";
 
@@ -62,10 +62,6 @@ public class Validator {
         }}.entrySet().iterator().next();
     }
 
-    private static Boolean isNotTournamentDeck(String link) {
-        return !RestAssured.given().get(link).getBody().asString().contains(TOURNEY_IDENTIFIER);
-    }
-
     private static Boolean hasEternalWarcryLink(Map.Entry<String, List<String>> links) {
         if (links.getValue().isEmpty())
             xenoLog("No Eternal link from " + diskordNickName(links.getKey()));
@@ -74,6 +70,10 @@ public class Validator {
 
     private static void xenoLog(String message) {
         System.out.println("\n---===---\n" + message);
+    }
+
+    private static Boolean isNotTournamentDeck(String link) {
+        return !RestAssured.given().get(link).getBody().asString().contains(TOURNEY_IDENTIFIER);
     }
 
     private static List<String> fileContent(String fileName) {
@@ -97,7 +97,7 @@ public class Validator {
     }
 
     private static String diskordNickName(String line) {
-        Matcher matcher = DISKORD_NAME_MARKER.matcher(line);
+        Matcher matcher = DISCORD_NAME_MARKER.matcher(line);
         List<String> possibleNamePostfixes = new ArrayList<>();
         while (matcher.find()) {
             possibleNamePostfixes.add(matcher.group());
